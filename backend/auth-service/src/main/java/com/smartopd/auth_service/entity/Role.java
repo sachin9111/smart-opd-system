@@ -1,6 +1,9 @@
 package com.smartopd.auth_service.entity;
 
 
+
+import com.smartopd.auth_service.entity.enums.RoleCode;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,9 +20,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code", nullable = false, unique = true, length = 50)
-    private String code;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true, length = 50)
+    private RoleCode code;
 
-    @Column(name = "description", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String description;
+
 }
