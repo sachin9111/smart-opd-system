@@ -1,0 +1,89 @@
+<div class="container-fluid login-page">
+
+  <div class="row h-100">
+
+    <div class="col-lg-7 d-none d-lg-flex branding-panel">
+      <div class="branding-content">
+        <h1>Smart OPD</h1>
+        <h4>OTP Verification</h4>
+        <p>Enter the OTP sent to your registered email address.</p>
+      </div>
+    </div>
+
+    <div class="col-lg-5 login-panel">
+
+      <div class="login-card">
+
+        <h2 class="text-center mb-2">Verify OTP</h2>
+
+        <p class="text-center text-muted mb-4">
+          Please enter your email and the 6-digit OTP.
+        </p>
+
+        <form [formGroup]="verifyForm" (ngSubmit)="verifyOtp()">
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="Enter Email">
+
+            <small class="text-danger"
+              *ngIf="f['email'].touched && f['email'].invalid">
+              Valid email is required.
+            </small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">OTP</label>
+
+            <input
+              type="text"
+              maxlength="6"
+              class="form-control text-center"
+              formControlName="otp"
+              placeholder="Enter 6-digit OTP">
+
+            <small class="text-danger"
+              *ngIf="f['otp'].touched && f['otp'].invalid">
+              OTP must be 6 digits.
+            </small>
+          </div>
+
+          <button
+            class="btn btn-primary w-100"
+            [disabled]="loading">
+
+            <span *ngIf="!loading">
+              Verify OTP
+            </span>
+
+            <span *ngIf="loading">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Verifying...
+            </span>
+
+          </button>
+
+        </form>
+
+        <hr>
+
+        <div class="text-center">
+
+          <a routerLink="/forgot-password">
+            Back
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

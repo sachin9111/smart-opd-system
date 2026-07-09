@@ -1,0 +1,55 @@
+<div class="container-fluid">
+
+    <h2 class="mb-4">
+        Dashboard
+    </h2>
+
+    <div class="row">
+
+        <div class="col-lg-3 mb-4">
+
+            <app-stat-card
+                title="Doctors"
+                [value]="15"
+                icon="fa-user-doctor"
+                color="primary">
+            </app-stat-card>
+
+        </div>
+
+        <div class="col-lg-3 mb-4">
+
+            <app-stat-card
+                title="Patients"
+                [value]="286"
+                icon="fa-hospital-user"
+                color="success">
+            </app-stat-card>
+
+        </div>
+
+        <div class="col-lg-3 mb-4">
+
+            <app-stat-card
+                title="Appointments"
+                [value]="34"
+                icon="fa-calendar-check"
+                color="warning">
+            </app-stat-card>
+
+        </div>
+
+        <div class="col-lg-3 mb-4">
+
+            <app-stat-card
+                title="Waiting Queue"
+                [value]="12"
+                icon="fa-list-check"
+                color="danger">
+            </app-stat-card>
+
+        </div>
+
+    </div>
+
+</div>

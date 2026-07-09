@@ -1,0 +1,25 @@
+.stat-card{
+    border:none;
+    border-radius:12px;
+}
+
+.card-body{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:25px;
+}
+
+.stat-left h6{
+    color:#6c757d;
+    margin-bottom:12px;
+}
+
+.stat-left h2{
+    margin:0;
+    font-weight:700;
+}
+
+.stat-right i{
+    font-size:38px;
+}

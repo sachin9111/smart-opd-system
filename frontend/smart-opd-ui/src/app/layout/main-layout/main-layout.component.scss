@@ -1,0 +1,19 @@
+.app-layout{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    overflow:hidden;
+}
+
+.app-body{
+    display:flex;
+    flex:1;
+    overflow:hidden;
+}
+
+.content-wrapper{
+    flex:1;
+    overflow-y:auto;
+    background:#f5f7fb;
+    padding:20px;
+}

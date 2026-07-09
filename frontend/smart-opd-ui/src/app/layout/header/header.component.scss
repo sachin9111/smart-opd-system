@@ -1,0 +1,34 @@
+.header{
+    height:60px;
+    background:#ffffff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 20px;
+    border-bottom:1px solid #dee2e6;
+}
+
+.left-section,
+.right-section{
+    display:flex;
+    align-items:center;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:700;
+    margin-left:15px;
+    color:#0d6efd;
+}
+
+.menu-btn,
+.icon-btn,
+.profile-btn{
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+
+.profile-btn span{
+    margin-left:8px;
+}
