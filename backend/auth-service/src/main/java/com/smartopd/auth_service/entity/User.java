@@ -1,13 +1,14 @@
 package com.smartopd.auth_service.entity;
 
+import com.smartopd.auth_service.entity.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.smartopd.auth_service.entity.enums.UserStatus;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(
@@ -28,35 +29,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     private String firstName;
 
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     private String lastName;
 
-    @Column(nullable = false,length = 150)
+    @Column(nullable = false, length = 150)
     private String email;
 
-    @Column(nullable = false,length = 15)
+    @Column(nullable = false, length = 15)
     private String mobile;
 
     @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private UserStatus status;
 
-    @Column(nullable = false)
     @Builder.Default
+    @Column(nullable = false)
     private boolean enabled = true;
 
-    @Column(nullable = false)
     @Builder.Default
+    @Column(nullable = false)
     private boolean emailVerified = false;
 
-    @Column(nullable = false)
     @Builder.Default
+    @Column(nullable = false)
     private boolean mobileVerified = false;
 
     private LocalDateTime lastLogin;
@@ -67,4 +68,29 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    /**
+     * User Roles
+     */
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<UserRole> userRoles = new ArrayList<>();
+
+    /**
+     * Refresh Tokens
+     */
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
 }

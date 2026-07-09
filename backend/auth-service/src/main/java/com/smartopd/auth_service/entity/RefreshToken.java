@@ -34,7 +34,7 @@ public class RefreshToken {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean revoked = false;
+    private boolean revoked = false;
 
     @Column(length = 200)
     private String deviceName;
