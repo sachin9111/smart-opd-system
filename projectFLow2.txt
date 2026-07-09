@@ -1,0 +1,301 @@
+                                      ┌────────────────────┐
+                                      │    Angular UI      │
+                                      │   (Web / Mobile)   │
+                                      └─────────┬──────────┘
+                                                │
+                                     HTTPS + JWT Token
+                                                │
+                                                ▼
+                               ┌─────────────────────────┐
+                               │      API Gateway        │
+                               │ Spring Cloud Gateway    │
+                               └─────────┬───────────────┘
+                                         │
+                           Looks up services in Eureka
+                                         │
+                                         ▼
+                            ┌─────────────────────────┐
+                            │    Eureka Server        │
+                            │  Service Registry       │
+                            └─────────────────────────┘
+
+──────────────────────────────────────────────────────────────────────────────
+
+Signup Flow
+
+Angular
+   │
+   ▼
+API Gateway
+   │
+   ▼
+Auth Service
+   │
+   ├── Validate Request
+   ├── Encrypt Password
+   ├── Save User Credentials
+   ├── Save Roles
+   ├── Generate JWT
+   │
+   └──────────────► Kafka
+                        │
+                        ▼
+              USER_CREATED Event
+                        │
+      ┌─────────────────┼───────────────────┐
+      ▼                 ▼                   ▼
+User Service      Notification       Audit Service
+Create Profile    Send Welcome       Store Logs
+                  Email/SMS
+
+Response
+User receives JWT Token
+
+──────────────────────────────────────────────────────────────────────────────
+
+Login Flow
+
+Angular
+   │
+   ▼
+Gateway
+   │
+   ▼
+Auth Service
+   │
+   ├── Verify Email
+   ├── Verify Password
+   ├── Generate JWT
+   │
+   ▼
+Return JWT
+
+Angular stores JWT
+
+Every future request
+
+Authorization:
+Bearer JWT_TOKEN
+
+──────────────────────────────────────────────────────────────────────────────
+
+Authenticated Request
+
+Angular
+   │
+Bearer Token
+   │
+   ▼
+API Gateway
+   │
+Verify JWT
+   │
+Forward Request
+   │
+   ▼
+Requested Service
+
+Example
+
+Appointment Service
+Doctor Service
+Patient Service
+Billing Service
+
+No Login Again
+
+──────────────────────────────────────────────────────────────────────────────
+
+Book Appointment
+
+Angular
+   │
+   ▼
+Gateway
+   │
+   ▼
+Appointment Service
+   │
+   ├── Validate Slot
+   ├── Save Appointment
+   ├── Publish Kafka Event
+   │
+   ▼
+Kafka
+   │
+   ├────────► Notification Service
+   │            Send SMS
+   │            Send Email
+   │
+   ├────────► Audit Service
+   │            Store History
+   │
+   └────────► Analytics Service
+                Update Dashboard
+
+──────────────────────────────────────────────────────────────────────────────
+
+Doctor Updates Status
+
+Doctor
+   │
+   ▼
+Gateway
+   │
+   ▼
+Appointment Service
+   │
+   ├── Status = Completed
+   ├── Publish Event
+   │
+   ▼
+Kafka
+   │
+   ├────► Billing Service
+   ├────► Notification Service
+   ├────► Analytics Service
+   └────► Audit Service
+
+──────────────────────────────────────────────────────────────────────────────
+
+Prescription Added
+
+Doctor
+   │
+   ▼
+Gateway
+   │
+   ▼
+Prescription Service
+   │
+   ├── Save Prescription
+   ├── Publish Event
+   │
+   ▼
+Kafka
+   │
+   ├────► Pharmacy Service
+   ├────► Notification Service
+   └────► Patient Timeline
+
+──────────────────────────────────────────────────────────────────────────────
+
+Payment
+
+Angular
+   │
+   ▼
+Gateway
+   │
+   ▼
+Billing Service
+   │
+   ├── Verify Payment
+   ├── Save Invoice
+   ├── Publish Event
+   │
+   ▼
+Kafka
+   │
+   ├────► Notification
+   ├────► Analytics
+   └────► Audit
+
+──────────────────────────────────────────────────────────────────────────────
+
+Logout
+
+Angular
+   │
+Delete JWT
+   │
+   ▼
+User Logged Out
+
+──────────────────────────────────────────────────────────────────────────────
+
+Background Services
+
+Kafka
+│
+├── Notification Service
+│     Email
+│     SMS
+│     Push Notification
+│
+├── Audit Service
+│     Every Action
+│
+├── Analytics Service
+│     Reports
+│
+└── Logging Service
+
+──────────────────────────────────────────────────────────────────────────────
+
+Role of Each Component
+
+Angular
+    UI only
+
+API Gateway
+    Single entry point
+    JWT validation
+    Routing
+    Rate limiting
+    CORS
+
+Eureka
+    Service Discovery
+
+Auth Service
+    Login
+    Signup
+    JWT
+    Roles
+
+User Service
+    User Profile
+    Address
+    Personal Details
+
+Appointment Service
+    Booking
+
+Doctor Service
+    Doctor Management
+
+Patient Service
+    Patient Records
+
+Billing Service
+    Payments
+
+Prescription Service
+    Medicines
+
+Notification Service
+    Email/SMS
+
+Kafka
+    Event communication
+
+MySQL
+    Each microservice owns its own database
+
+Docker (later)
+    Runs every service in containers
+
+Kubernetes (later)
+    Auto scaling
+    Self healing
+    Load balancing
+
+GitHub
+    Source code
+
+Jenkins (later)
+    CI/CD
+
+AWS (later)
+    Production hosting

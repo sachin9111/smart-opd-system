@@ -28,9 +28,11 @@ import com.smartopd.auth_service.entity.User;
 import com.smartopd.auth_service.entity.UserRole;
 import com.smartopd.auth_service.entity.enums.RoleCode;
 import com.smartopd.auth_service.entity.enums.UserStatus;
+import com.smartopd.auth_service.event.UserCreatedEvent;
 import com.smartopd.auth_service.exception.EmailAlreadyExistsException;
 import com.smartopd.auth_service.exception.MobileAlreadyExistsException;
 import com.smartopd.auth_service.exception.RoleNotFoundException;
+import com.smartopd.auth_service.producer.UserEventProducer;
 import com.smartopd.auth_service.repository.PasswordResetOtpRepository;
 import com.smartopd.auth_service.repository.RefreshTokenRepository;
 import com.smartopd.auth_service.repository.RoleRepository;
@@ -66,6 +68,8 @@ public class AuthServiceImpl implements AuthService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	
 	private final PasswordResetOtpRepository passwordResetOtpRepository;
+	
+	private final UserEventProducer userEventProducer;
 
     @Override
     @Transactional
@@ -100,6 +104,16 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         user = userRepository.save(user);
+        
+        UserCreatedEvent event = UserCreatedEvent.builder()
+                .authUserId(user.getId())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .mobile(request.getMobile())
+                .build();
+
+        userEventProducer.publish(event);
 
         // Assign Role
         UserRole userRole = UserRole.builder()

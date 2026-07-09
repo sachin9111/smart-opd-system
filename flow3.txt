@@ -1,0 +1,740 @@
+This is actually one of the best documents you can have before writing any code. If you understand this flow, you can rebuild the entire project even if you forget everything.
+
+I'll keep it based on our Smart OPD architecture.
+
+COMPLETE APPLICATION FLOW
+                Angular App
+                     │
+                     │
+             HTTPS Request
+                     │
+                     ▼
+              API Gateway (8080)
+                     │
+         Authenticate JWT Token
+         Routing + Rate Limiting
+                     │
+ ────────────────────┼────────────────────
+ │                   │                    │
+ ▼                   ▼                    ▼
+Auth Service     User Service       Appointment Service
+(Login)          (Patient)          (Booking)
+PHASE 1 - USER REGISTRATION
+User
+ │
+ │ Fill Signup Form
+ │
+ ▼
+Angular
+ │
+ │ POST /auth/register
+ ▼
+API Gateway
+ │
+ │ Route request
+ ▼
+Auth Service
+Auth Service does
+1. Validate request
+
+2. Check email already exists?
+
+3. Encrypt password (BCrypt)
+
+4. Save user
+
+Database
+
+auth_db
+
+users
+roles
+user_roles
+refresh_tokens
+
+Then
+
+User Created
+
+Now publish event
+
+Kafka
+
+Topic
+
+user-created
+
+Message
+
+{
+userId:1,
+email:"abc@gmail.com",
+role:"PATIENT"
+}
+
+
+Auth Service DOES NOT call User Service directly.
+
+It only publishes the event.
+
+---
+
+# PHASE 2 - USER SERVICE
+
+User Service is listening.
+
+
+Kafka
+
+user-created
+
+
+↓
+
+Receives
+
+
+{
+userId:1
+email
+role
+}
+
+
+Then
+
+Creates patient profile
+
+Database
+
+
+user_db
+
+patients
+addresses
+emergency_contacts
+
+
+Example
+
+
+patients
+
+id
+auth_user_id
+name
+mobile
+gender
+dob
+
+
+Notice
+
+
+auth_user_id
+
+is the id coming from Auth Service
+
+
+Now
+
+User Service publishes
+
+
+patient-created
+
+
+---
+
+# PHASE 3 - LOGIN
+
+
+Angular
+
+POST
+
+/auth/login
+
+
+↓
+
+API Gateway
+
+↓
+
+Auth Service
+
+
+Check email
+
+Check password
+
+Generate JWT
+
+Generate Refresh Token
+
+
+Return
+
+
+{
+accessToken
+
+refreshToken
+
+role
+
+userId
+}
+
+
+Angular stores
+
+
+Access Token
+
+Refresh Token
+
+
+---
+
+# PHASE 4 - EVERY REQUEST
+
+Example
+
+
+GET
+
+/api/patient/profile
+
+
+↓
+
+Angular
+
+Adds
+
+
+Authorization
+
+Bearer JWT
+
+
+↓
+
+API Gateway
+
+↓
+
+Gateway verifies JWT
+
+↓
+
+If valid
+
+↓
+
+Routes
+
+
+User Service
+
+
+↓
+
+User Service
+
+Again verifies JWT
+
+(Every service should verify.)
+
+↓
+
+Returns profile
+
+---
+
+# PHASE 5 - DASHBOARD
+
+Angular loads
+
+
+Dashboard
+
+
+Calls
+
+
+GET
+
+/user/profile
+
+
+↓
+
+User Service
+
+↓
+
+Returns
+
+
+Patient Details
+
+
+---
+
+# PHASE 6 - BOOK APPOINTMENT
+
+Patient clicks
+
+
+Book Appointment
+
+
+↓
+
+Angular
+
+↓
+
+Gateway
+
+↓
+
+Appointment Service
+
+Checks
+
+
+Doctor Exists?
+
+Slot Free?
+
+
+Database
+
+
+appointment_db
+
+appointments
+
+slots
+
+
+Creates
+
+Appointment
+
+Then
+
+Publishes
+
+
+appointment-created
+
+
+Kafka
+
+---
+
+# PHASE 7 - NOTIFICATION
+
+Notification Service
+
+Listening
+
+
+appointment-created
+
+
+Receives
+
+
+Patient
+
+Doctor
+
+Time
+
+
+Sends
+
+
+Email
+
+SMS
+
+Push Notification
+
+
+Stores
+
+
+notification_db
+
+
+---
+
+# PHASE 8 - BILLING
+
+Appointment completed
+
+↓
+
+Appointment Service
+
+Publishes
+
+
+appointment-completed
+
+
+↓
+
+Billing Service
+
+Creates
+
+Invoice
+
+Database
+
+
+billing_db
+
+
+Publishes
+
+
+bill-generated
+
+
+---
+
+# PHASE 9 - PAYMENT
+
+Angular
+
+↓
+
+Gateway
+
+↓
+
+Payment Service
+
+↓
+
+Payment Gateway
+
+(Razorpay/Stripe later)
+
+↓
+
+Success
+
+↓
+
+Publishes
+
+
+payment-success
+
+
+---
+
+# PHASE 10 - REPORT SERVICE
+
+Consumes
+
+
+payment-success
+
+appointment-created
+
+appointment-completed
+
+
+Builds reports
+
+
+Daily Revenue
+
+Appointments
+
+Doctors
+
+Patients
+
+
+---
+
+# PHASE 11 - ADMIN
+
+Admin Login
+
+↓
+
+Gateway
+
+↓
+
+Admin Service
+
+Can call
+
+
+User Service
+
+Appointment Service
+
+Billing Service
+
+
+through REST APIs.
+
+---
+
+# WHERE EUREKA COMES
+
+Every service starts.
+
+
+Auth Service
+
+
+↓
+
+Registers
+
+
+Eureka
+
+User Service
+
+
+↓
+
+Registers
+
+
+Eureka
+
+Appointment Service
+
+
+↓
+
+Registers
+
+
+Eureka
+
+
+API Gateway never needs fixed URLs.
+
+Instead of
+
+
+http://localhost:8082
+
+
+it asks Eureka:
+
+
+Where is USER-SERVICE?
+
+
+Eureka replies
+
+
+localhost:8082
+
+
+Later, if you have two instances:
+
+
+USER-SERVICE
+
+8082
+
+8085
+
+
+Gateway automatically load-balances between them.
+
+---
+
+# WHERE KAFKA COMES
+
+Instead of
+
+
+Auth Service
+
+↓
+
+calls
+
+↓
+
+User Service
+
+
+we do
+
+
+Auth Service
+
+↓
+
+Kafka
+
+↓
+
+User Service
+
+
+Benefits:
+
+- Services are loosely coupled.
+- If User Service is temporarily down, Kafka keeps the event until it can be processed.
+- Multiple services can react to the same event independently.
+
+---
+
+# WHERE API GATEWAY COMES
+
+Without Gateway
+
+
+Angular
+
+↓
+
+8081
+
+↓
+
+8082
+
+↓
+
+8083
+
+↓
+
+8084
+
+
+Angular must know every service.
+
+With Gateway
+
+
+Angular
+
+↓
+
+8080
+
+↓
+
+Gateway
+
+↓
+
+All Services
+
+
+Angular only knows **one URL**.
+
+---
+
+# WHERE DOCKER COMES (Later)
+
+Without Docker
+
+
+Start Eureka
+
+Start Kafka
+
+Start ZooKeeper
+
+Start Gateway
+
+Start Auth
+
+Start User
+
+Start Appointment
+
+
+Manually.
+
+With Docker
+
+
+docker compose up
+
+
+Everything starts automatically.
+
+---
+
+# COMPLETE END-TO-END FLOW
+
+```text
+User
+ │
+ ▼
+Angular
+ │
+ ▼
+API Gateway
+ │
+ ├──────────────► Auth Service
+ │                   │
+ │                   ├── Save user → auth_db
+ │                   │
+ │                   └── Publish "user-created"
+ │                            │
+ │                            ▼
+ │                         Kafka
+ │                            │
+ │                            ▼
+ │                     User Service
+ │                            │
+ │                            ├── Save patient → user_db
+ │                            └── Publish "patient-created"
+ │
+ │
+ ├──────────────► Appointment Service
+ │                   │
+ │                   ├── Save appointment
+ │                   └── Publish "appointment-created"
+ │                            │
+ │                            ▼
+ │                         Kafka
+ │                            │
+ │                            ▼
+ │                  Notification Service
+ │                            │
+ │                            ├── Email
+ │                            ├── SMS
+ │                            └── Push Notification
+ │
+ ├──────────────► Billing Service
+ │                   │
+ │                   └── Create Invoice
+ │
+ └──────────────► Payment Service
+                     │
+                     └── Publish "payment-success"
+                               │
+                               ▼
+                         Report Service
+
+This is the architecture we'll build step by step. Right now, you already have Eureka, Kafka, Auth Service, and User Service started. The next milestone is to complete the Kafka-based communication between Auth Service and User Service so that a new user registration automatically creates the corresponding patient profile without any direct REST call. After that, we'll add the API Gateway and continue expanding the remaining services.
