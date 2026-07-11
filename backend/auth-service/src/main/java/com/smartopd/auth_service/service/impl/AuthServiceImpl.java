@@ -232,36 +232,24 @@ public class AuthServiceImpl implements AuthService {
     }
     
     
-    @Override
-    @Transactional(readOnly = true)
-    public UserInfoResponse getCurrentUser() {
+	@Override
+	@Transactional(readOnly = true)
+	public UserInfoResponse getCurrentUser() {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 
-        CustomUserDetails userDetails =
-                (CustomUserDetails) authentication.getPrincipal();
+		User user = userRepository.findByIdWithRoles(userDetails.getUser().getId())
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
 
-        User user = userDetails.getUser();
+		return UserInfoResponse.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
+				.email(user.getEmail()).mobile(user.getMobile())
+				.roles(user.getUserRoles().stream().filter(UserRole::isActive)
+						.map(userRole -> userRole.getRole().getCode().name()).collect(Collectors.toList()))
+				.build();
 
-        return UserInfoResponse.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .mobile(user.getMobile())
-                .roles(
-                        user.getUserRoles()
-                                .stream()
-                                .filter(UserRole::isActive)
-                                .map(userRole ->
-                                        userRole.getRole()
-                                                .getCode()
-                                                .name())
-                                .collect(Collectors.toList()))
-                .build();
-
-    }
+	}
     
     
     @Override

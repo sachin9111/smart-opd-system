@@ -1,0 +1,135 @@
+<div class="card">
+
+    <div class="card-header">
+
+        <h3>Patient Details</h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <h5>Personal Information</h5>
+
+                <hr>
+
+                <p><strong>Name :</strong>
+
+                    {{patient.firstName}}
+
+                    {{patient.lastName}}
+
+                </p>
+
+                <p><strong>Email :</strong>
+
+                    {{patient.email}}
+
+                </p>
+
+                <p><strong>Mobile :</strong>
+
+                    {{patient.mobile}}
+
+                </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <h5>Medical Information</h5>
+
+                <hr>
+
+                <p>
+
+                    <strong>Blood Group :</strong>
+
+                    {{patient.bloodGroup}}
+
+                </p>
+
+                <p>
+
+                    <strong>Height :</strong>
+
+                    {{patient.height}}
+
+                </p>
+
+                <p>
+
+                    <strong>Weight :</strong>
+
+                    {{patient.weight}}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <h5>Emergency Contact</h5>
+
+                <hr>
+
+                <p>
+
+                    {{patient.emergencyContactName}}
+
+                </p>
+
+                <p>
+
+                    {{patient.emergencyContactNumber}}
+
+                </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <h5>Insurance</h5>
+
+                <hr>
+
+                <p>
+
+                    {{patient.insuranceNumber}}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h5>Medical History</h5>
+
+        <p>
+
+            {{patient.medicalHistory}}
+
+        </p>
+
+        <h5>Allergies</h5>
+
+        <p>
+
+            {{patient.allergies}}
+
+        </p>
+
+    </div>
+
+</div>

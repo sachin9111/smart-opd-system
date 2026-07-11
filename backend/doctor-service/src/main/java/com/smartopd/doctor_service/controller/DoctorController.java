@@ -29,8 +29,7 @@ public class DoctorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DoctorResponse> getDoctor(
-            @PathVariable Long id) {
+    public ResponseEntity<DoctorResponse> getDoctor(@PathVariable("id") Long id) {
 
         return ResponseEntity.ok(
                 doctorService.getDoctor(id));
@@ -45,7 +44,7 @@ public class DoctorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DoctorResponse> updateDoctor(
-            @PathVariable Long id,
+    		@PathVariable("id") Long id,
             @Valid @RequestBody CreateDoctorRequest request) {
 
         return ResponseEntity.ok(
@@ -54,7 +53,7 @@ public class DoctorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDoctor(
-            @PathVariable Long id) {
+    		@PathVariable("id") Long id) {
 
         doctorService.deleteDoctor(id);
 

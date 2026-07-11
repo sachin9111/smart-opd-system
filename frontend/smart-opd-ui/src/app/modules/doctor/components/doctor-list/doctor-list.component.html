@@ -1,0 +1,53 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="card-title mb-0">Doctors</h3>
+    <button class="btn btn-primary" routerLink="/doctors/add">
+      + Add Doctor
+    </button>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Registration No</th>
+            <th>Specialization</th>
+            <th>Department</th>
+            <th>Experience</th>
+            <th>Fee</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doctor of doctors">
+            <td>{{doctor.id}}</td>
+            <td>{{doctor.registrationNumber}}</td>
+            <td>{{doctor.specialization}}</td>
+            <td>{{doctor.department}}</td>
+            <td>{{doctor.experience}} Years</td>
+            <td>₹ {{doctor.consultationFee}}</td>
+            <td>
+              <span class="badge" [ngClass]="doctor.active ? 'bg-success' : 'bg-danger'">
+                {{doctor.active ? 'Active' : 'Inactive'}}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-info me-2" [routerLink]="['/doctors/view', doctor.id]">
+                View
+              </button>
+              <button class="btn btn-sm btn-warning me-2" [routerLink]="['/doctors/edit', doctor.id]">
+                Edit
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="deleteDoctor(doctor.id)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

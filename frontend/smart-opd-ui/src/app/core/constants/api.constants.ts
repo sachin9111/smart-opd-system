@@ -2,8 +2,21 @@ export class ApiConstants {
 
   private constructor() {}
 
-  public static readonly BASE_URL =
-    'http://localhost:8080/api/v1';
+  public static readonly BASE_URL = 'http://localhost:8080/api/v1';
+  public static readonly BASE_URL_GATEWAY = 'http://localhost:8081/api/v1';
+
+  public static readonly PATIENT = {
+
+        LIST: '/patients',
+
+    }
+
+ public static readonly  USER = {
+
+    LIST: '/users'
+
+}
+
 
   public static readonly AUTH = {
 
@@ -28,5 +41,19 @@ export class ApiConstants {
     
 
   };
+
+  public static readonly DOCTOR = {
+
+    GET_ALL: '/doctors',
+
+    GET_BY_ID: '/doctors',
+
+    CREATE: '/api/v1/doctors',
+
+    UPDATE: '/api/v1/doctors',
+
+    DELETE: '/api/v1/doctors'
+
+  }
 
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -8,5 +9,7 @@ import { Component } from '@angular/core';
 export class HeaderComponent {
 
    userName = 'User';
+
+ 
 
 }

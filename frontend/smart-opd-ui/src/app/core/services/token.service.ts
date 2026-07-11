@@ -47,4 +47,10 @@ export class TokenService {
 
   }
 
+  logout(): void {
+
+    this.clear();
+
+  }
+
 }

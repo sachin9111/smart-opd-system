@@ -37,6 +37,17 @@ spring:
             uri: lb://QUEUE-SERVICE
             predicates:
             - Path=/api/v1/queue/**
+            
+          - id: patient-service
+            uri: lb://PATIENT-SERVICE
+            predicates:
+            - Path=/api/v1/patients/**
+              
+          
+          
+          
+ 
+          
               
             
               

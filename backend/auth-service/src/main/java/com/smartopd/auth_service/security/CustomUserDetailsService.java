@@ -13,17 +13,29 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     
+//    @Override
+//    public UserDetails loadUserByUsername(String username)
+//            throws UsernameNotFoundException {
+//
+//        User user = userRepository
+//                .findByEmailOrMobile(username, username)
+//                .orElseThrow(() ->
+//                        new UsernameNotFoundException("User not found."));
+//
+//        return new CustomUserDetails(user);
+//
+//    }
+    
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
         User user = userRepository
-                .findByEmailOrMobile(username, username)
+                .findByEmailOrMobileWithRoles(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found."));
 
         return new CustomUserDetails(user);
-
     }
 
 }

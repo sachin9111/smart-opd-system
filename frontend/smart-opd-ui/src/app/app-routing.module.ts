@@ -10,6 +10,11 @@ import { ResetPasswordComponent } from './modules/auth/reset-password/reset-pass
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { DoctorListComponent } from './modules/doctor/components/doctor-list/doctor-list.component';
+import { DoctorAddComponent } from './modules/doctor/components/doctor-add/doctor-add.component';
+import { DoctorEditComponent } from './modules/doctor/components/doctor-edit/doctor-edit.component';
+import { DoctorViewComponent } from './modules/doctor/components/doctor-view/doctor-view.component';
 
 const routes: Routes = [
 
@@ -24,10 +29,6 @@ const routes: Routes = [
     component: LoginComponent
   },
 
-  // {
-  //   path: 'dashboard',
-  //   component: DashboardComponent
-  // },
   {
     path:'register',
     component:RegisterComponent
@@ -46,23 +47,52 @@ const routes: Routes = [
     path: 'reset-password',
     component: ResetPasswordComponent
   },
+
   {
-      path: 'profile',
-      component: ProfileComponent
+    path: 'doctors',
+    component: DoctorListComponent,
+    canActivate: [AuthGuard]
   },
   {
-      path:'change-password',
-      component:ChangePasswordComponent
+    path: 'doctors/add',
+    component: DoctorAddComponent,
+    canActivate: [AuthGuard]
   },
+  {
+    path: 'doctors/edit/:id',
+    component: DoctorEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'doctors/view/:id',
+    component: DoctorViewComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'patients',
+    loadChildren: () =>
+        import('./modules/patient/patient.module')
+        .then(m => m.PatientModule)
+  },
+  
   {
     path: '',
     component: MainLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
 
       {
         path: 'dashboard',
         component: DashboardComponent
-      }
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
+      {
+          path:'change-password',
+          component:ChangePasswordComponent
+      },
 
     ]
   },

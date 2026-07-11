@@ -2,6 +2,7 @@ package com.smartopd.user_service.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -26,10 +27,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
 
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() ->
+        new RuntimeException("User not found"));
 
         return convertToDto(user);
     }
+    
+    
+    
+    @Override
+    public UserDto getUserByAuthUserId(Long authUserId) {
+        System.out.println("user called");
+        User user = userRepository.findByAuthUserId(authUserId)
+                .orElseThrow(() ->new RuntimeException("User not found"));
+
+        return convertToDto(user);
+
+    }
+    
+    
 
     @Override
     public List<UserDto> getAllUsers() {

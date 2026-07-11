@@ -1,0 +1,83 @@
+<div class="card">
+
+    <div class="card-header">
+
+        <h3>Doctor Details</h3>
+
+    </div>
+
+    <div class="card-body" *ngIf="doctor">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Registration Number</strong>
+
+                <div>{{doctor.registrationNumber}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Specialization</strong>
+
+                <div>{{doctor.specialization}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Qualification</strong>
+
+                <div>{{doctor.qualification}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Experience</strong>
+
+                <div>{{doctor.experience}} Years</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Department</strong>
+
+                <div>{{doctor.department}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Consultation Fee</strong>
+
+                <div>₹ {{doctor.consultationFee}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <strong>Status</strong>
+
+                <div>
+
+                    <span
+                        class="badge"
+                        [ngClass]="doctor.active ? 'bg-success':'bg-danger'">
+
+                        {{doctor.active ? 'Active':'Inactive'}}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

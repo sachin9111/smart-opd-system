@@ -1,0 +1,83 @@
+<div class="page-header d-flex justify-content-between mb-3">
+
+    <h2>
+
+        Patient Management
+
+    </h2>
+
+    <button
+        class="btn btn-primary"
+        (click)="addPatient()">
+
+        Add Patient
+
+    </button>
+
+</div>
+
+<table class="table table-bordered table-hover">
+
+    <thead>
+
+        <tr>
+
+            <th>User Id</th>
+
+            <th>Blood Group</th>
+
+            <th>Height</th>
+
+            <th>Weight</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        <tr *ngFor="let patient of patients">
+
+            <td>{{patient.userId}}</td>
+
+            <td>{{patient.bloodGroup}}</td>
+
+            <td>{{patient.height}}</td>
+
+            <td>{{patient.weight}}</td>
+
+            <td>
+
+                <button
+                    class="btn btn-info btn-sm"
+                    [routerLink]="['/patients/view', patient.id]">
+
+                    View
+
+                </button>
+
+                <button
+                    class="btn btn-warning btn-sm"
+                    [routerLink]="['/patients/edit', patient.id]">
+
+                    Edit
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    (click)="deletePatient(patient.id!)">
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>

@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.smartopd.user_service.dto.ProfileResponse;
+import com.smartopd.user_service.dto.UserDto;
 import com.smartopd.user_service.service.UserService;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,18 +21,7 @@ public class UserController {
 	@Autowired
 	private UserService   userService;
 
-//    @GetMapping("/profile")
-//    public ResponseEntity<?> profile(@RequestHeader("X-User-Id") String userId,@RequestHeader("X-User-Email") String email,@RequestHeader("X-User-Roles") String roles) {
-//    	
-//
-//        return ResponseEntity.ok(
-//                Map.of(
-//                        "userId", userId,
-//                        "email", email,
-//                        "roles", roles
-//                )
-//        );
-//    }
+
 	
 	
 	@GetMapping("/profile")
@@ -40,5 +31,28 @@ public class UserController {
 	    return ResponseEntity.ok(
 	            userService.getProfile(Long.parseLong(userId))
 	    );
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<UserDto>> getAllUsers() {
+
+	    return ResponseEntity.ok(
+	            userService.getAllUsers());
+
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<UserDto> getUser(
+	        @PathVariable("id") Long id) {
+
+	    return ResponseEntity.ok(
+	            userService.getUserById(id));
+
+	}
+	
+	@GetMapping("/auth/{authUserId}")
+	public ResponseEntity<UserDto> getByAuthUserId(@PathVariable("authUserId") Long authUserId) {
+
+	    return ResponseEntity.ok(userService.getUserByAuthUserId(authUserId));
 	}
 }
