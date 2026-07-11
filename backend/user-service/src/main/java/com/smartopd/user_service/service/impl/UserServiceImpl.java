@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-
+import com.smartopd.user_service.dto.ProfileResponse;
 import com.smartopd.user_service.dto.UserDto;
 import com.smartopd.user_service.entity.User;
 import com.smartopd.user_service.event.UserCreatedEvent;
@@ -78,5 +78,25 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.info("User Profile Created Successfully");
+    }
+    
+    @Override
+    public ProfileResponse getProfile(Long authUserId) {
+
+        User user = userRepository.findByAuthUserId(authUserId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        return ProfileResponse.builder()
+                .id(user.getId())
+                .authUserId(user.getAuthUserId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .gender(user.getGender())
+                .dob(user.getDob())
+                .mobile(user.getMobile())
+                .email(user.getEmail())
+                .profilePhoto(user.getProfilePhoto())
+                .build();
     }
 }

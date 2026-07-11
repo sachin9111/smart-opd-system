@@ -1,0 +1,42 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: doctor-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/smart_opd_doctor
+    username: root
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+
+jwt:
+  secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

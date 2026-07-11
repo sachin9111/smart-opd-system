@@ -1,6 +1,9 @@
 server:
   port: 8082
 
+jwt:
+  secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+
 spring:
   application:
     name: user-service
@@ -23,8 +26,12 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-
-     
+      
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
 
 eureka:
   client:
