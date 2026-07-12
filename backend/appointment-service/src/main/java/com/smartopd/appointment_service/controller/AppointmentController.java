@@ -31,7 +31,7 @@ public class AppointmentController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AppointmentResponse> getAppointment(@PathVariable Long id) {
+	public ResponseEntity<AppointmentResponse> getAppointment(@PathVariable("id") Long id) {
 
 		return ResponseEntity.ok(appointmentService.getAppointment(id));
 	}
@@ -51,7 +51,7 @@ public class AppointmentController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> cancelAppointment(@PathVariable Long id) {
+	public ResponseEntity<Void> cancelAppointment(@PathVariable ("id") Long id) {
 
 		appointmentService.cancelAppointment(id);
 

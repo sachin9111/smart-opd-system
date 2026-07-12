@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { TokenService } from 'src/app/core/services/token.service';
@@ -9,12 +9,20 @@ import { TokenService } from 'src/app/core/services/token.service';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
+  
+    role: string | null = null;
+    @Input()
+    collapsed = false;
 
     constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
 ) {}
+
+ngOnInit() {
+    this.role = this.tokenService.getRoles();
+  }
 
 logout(): void {
 

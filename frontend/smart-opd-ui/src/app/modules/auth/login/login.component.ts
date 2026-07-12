@@ -23,7 +23,7 @@ export class LoginComponent {
     private authService: AuthService,
     private tokenService: TokenService,
     private toastr: ToastrService,
-    private router: Router
+    public router: Router
   ) {
     this.initializeForm();
   }
@@ -60,6 +60,7 @@ export class LoginComponent {
 
         this.tokenService.saveAccessToken(response.accessToken);
         this.tokenService.saveRefreshToken(response.refreshToken);
+        this.tokenService.saveRoles(response.user.roles);
 
         this.toastr.success(
           'Welcome ' + response.user.firstName,

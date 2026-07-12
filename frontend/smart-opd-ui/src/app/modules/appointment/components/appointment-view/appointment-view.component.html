@@ -1,0 +1,101 @@
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h4 class="mb-0">
+
+            Appointment Details
+
+        </h4>
+
+    </div>
+
+    <div class="card-body" *ngIf="appointment">
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Appointment ID</label>
+
+                <div>{{appointment.id}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Doctor ID</label>
+
+                <div>{{appointment.doctorId}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Patient ID</label>
+
+                <div>{{appointment.patientUserId}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Appointment Date</label>
+
+                <div>{{appointment.appointmentDate}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Appointment Time</label>
+
+                <div>{{appointment.appointmentTime}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Token Number</label>
+
+                <div>{{appointment.tokenNumber}}</div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <label class="fw-bold">Status</label>
+
+                <div>
+                    <span class="badge bg-success">
+                        {{appointment.status}}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="col-md-12">
+
+                <label class="fw-bold">Reason</label>
+
+                <div>{{appointment.reason}}</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card-footer text-end">
+
+        <a
+            routerLink="/appointments"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+</div>

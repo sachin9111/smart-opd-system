@@ -1,47 +1,101 @@
-.sidebar{
-    width:260px;
-    background:#1f2937;
-    color:#fff;
-    display:flex;
-    flex-direction:column;
+.sidebar {
+    width: 260px;
+    background: #1f2937;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    min-height: calc(100vh - 70px - 50px);
+    transition: width 0.3s ease;
 }
 
-.sidebar-header{
-    padding:20px;
-    border-bottom:1px solid rgba(255,255,255,.1);
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+    width: 70px;
 }
 
-.sidebar-menu{
-    list-style:none;
-    margin:0;
-    padding:15px 0;
+/* Sidebar Header */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
 }
 
-.sidebar-menu li{
-    margin:2px 0;
+.sidebar-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.sidebar-menu a{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    padding:12px 20px;
-    color:#d1d5db;
-    text-decoration:none;
-    transition:.3s;
+/* Hide Header when collapsed */
+.sidebar.collapsed .sidebar-header {
+    display: none;
 }
 
-.sidebar-menu a:hover{
-    background:#374151;
-    color:#fff;
+/* Menu */
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 15px 0;
+    flex: 1;
 }
 
-.sidebar-menu a.active{
-    background:#0d6efd;
-    color:#fff;
+.sidebar-menu li {
+    margin: 2px 0;
 }
 
-.sidebar-menu i{
-    width:20px;
-    text-align:center;
+/* Menu Links */
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    color: #d1d5db;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* Hover */
+.sidebar-menu a:hover {
+    background: #374151;
+    color: #fff;
+}
+
+/* Active Menu */
+.sidebar-menu a.active {
+    background: #0d6efd;
+    color: #fff;
+}
+
+/* Icons */
+.sidebar-menu i {
+    width: 22px;
+    min-width: 22px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* Collapse Styles */
+.sidebar.collapsed .sidebar-menu a {
+    justify-content: center;
+    padding: 12px;
+    gap: 0;
+}
+
+.sidebar.collapsed .sidebar-menu span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-menu i {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* Smooth animation */
+.sidebar,
+.sidebar-menu a,
+.sidebar-menu span,
+.sidebar-header {
+    transition: all 0.3s ease;
 }

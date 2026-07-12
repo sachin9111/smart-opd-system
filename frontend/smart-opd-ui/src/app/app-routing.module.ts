@@ -11,10 +11,6 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ChangePasswordComponent } from './modules/change-password/change-password.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { DoctorListComponent } from './modules/doctor/components/doctor-list/doctor-list.component';
-import { DoctorAddComponent } from './modules/doctor/components/doctor-add/doctor-add.component';
-import { DoctorEditComponent } from './modules/doctor/components/doctor-edit/doctor-edit.component';
-import { DoctorViewComponent } from './modules/doctor/components/doctor-view/doctor-view.component';
 
 const routes: Routes = [
 
@@ -48,28 +44,10 @@ const routes: Routes = [
     component: ResetPasswordComponent
   },
 
-  {
-    path: 'doctors',
-    component: DoctorListComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'doctors/add',
-    component: DoctorAddComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'doctors/edit/:id',
-    component: DoctorEditComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'doctors/view/:id',
-    component: DoctorViewComponent,
-    canActivate: [AuthGuard]
-  },
+  
   {
     path: 'patients',
+    component:MainLayoutComponent,
     loadChildren: () =>
         import('./modules/patient/patient.module')
         .then(m => m.PatientModule)
@@ -93,6 +71,25 @@ const routes: Routes = [
           path:'change-password',
           component:ChangePasswordComponent
       },
+      {
+          path: 'doctors',
+          loadChildren: () =>
+              import('./modules/doctor/doctor.module')
+              .then(m => m.DoctorModule)
+      },
+      {
+          path:'appointments',
+          loadChildren:()=>
+            import('./modules/appointment/appointment.module')
+            .then(m=>m.AppointmentModule)
+      },
+      {
+          path:'queue',
+          loadChildren:()=> 
+          import('./modules/queue/queue.module')
+          .then(m=>m.QueueModule)
+      }
+
 
     ]
   },

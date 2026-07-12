@@ -1,160 +1,101 @@
 <div class="container-fluid login-page">
-
-    <div class="row h-100">
-
-        <!-- Left Panel -->
-
-        <div class="col-lg-7 d-none d-lg-flex branding-panel">
-
-            <div class="branding-content">
-
-                <h1>Smart OPD</h1>
-
-                <h4>Hospital Queue Management System</h4>
-
-                <p>
-                    Manage appointments, patients, doctors and queues
-                    from one secure platform.
-                </p>
-
-            </div>
-
-        </div>
-
-        <!-- Right Panel -->
-
-        <div class="col-lg-5 col-md-12 login-panel">
-
-            <div class="login-card">
-
-                <h2 class="text-center mb-2">
-                    Welcome Back
-                </h2>
-
-                <p class="text-center text-muted mb-4">
-                    Sign in to continue
-                </p>
-
-                <form [formGroup]="loginForm" (ngSubmit)="login()">
-
-                    <!-- Username -->
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Email / Mobile
-                        </label>
-
-                        <input type="text" class="form-control" placeholder="Enter email or mobile"
-                            formControlName="username">
-
-                        <small class="text-danger" *ngIf="f['username'].touched && f['username'].invalid">
-
-                            Username is required.
-
-                        </small>
-
-                    </div>
-
-                    <!-- Password -->
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <div class="input-group">
-
-                            <input [type]="hidePassword ? 'password' : 'text'" class="form-control"
-                                placeholder="Enter password" formControlName="password">
-
-                            <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
-
-                                <i class="fa-solid" [ngClass]="hidePassword
-                                        ? 'fa-eye'
-                                        : 'fa-eye-slash'">
-
-                                </i>
-
-                            </button>
-
-                        </div>
-
-                        <small class="text-danger" *ngIf="f['password'].touched && f['password'].invalid">
-
-                            Password is required.
-
-                        </small>
-
-                    </div>
-
-                    <!-- Remember -->
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <div class="form-check">
-
-                            <input class="form-check-input" type="checkbox" formControlName="rememberMe" id="remember">
-
-                            <label class="form-check-label" for="remember">
-
-                                Remember Me
-
-                            </label>
-
-                        </div>
-
-                        <a routerLink="/forgot-password">
-
-                            Forgot Password?
-
-                        </a>
-
-                    </div>
-
-                    <!-- Login -->
-
-                    <button class="btn btn-primary w-100" [disabled]="loading">
-
-                        <span *ngIf="!loading">
-
-                            Login
-
-                        </span>
-
-                        <span *ngIf="loading">
-
-                            <span class="spinner-border spinner-border-sm me-2">
-
-                            </span>
-
-                            Logging in...
-
-                        </span>
-
-                    </button>
-
-                </form>
-
-                <hr class="my-4">
-
-                <div class="text-center">
-
-                    Don't have an account?
-
-                    <a routerLink="/register">
-
-                        Register
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
+  <div class="row h-100">
+    <!-- Left Panel -->
+    <div class="col-lg-7 d-none d-lg-flex branding-panel">
+      <div class="branding-content">
+        <h1>Smart OPD</h1>
+        <h4>Hospital Queue Management System</h4>
+        <p>
+          Manage appointments, patients, doctors and queues
+          from one secure platform.
+        </p>
+      </div>
     </div>
 
+    <!-- Right Panel -->
+    <div class="col-lg-5 col-md-12 login-panel">
+      <div class="login-card">
+        <h2 class="text-center mb-2">Welcome Back</h2>
+        <p class="text-center text-muted mb-4">Sign in to continue</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <!-- Username -->
+          <div class="mb-3">
+            <label class="form-label">Email / Mobile</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Enter email or mobile"
+              formControlName="username"
+            />
+            <small
+              class="text-danger"
+              *ngIf="f['username'].touched && f['username'].invalid"
+            >
+              Username is required.
+            </small>
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+              <input
+                [type]="hidePassword ? 'password' : 'text'"
+                class="form-control"
+                placeholder="Enter password"
+                formControlName="password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="togglePassword()"
+              >
+                <i
+                  class="fa-solid"
+                  [ngClass]="hidePassword ? 'fa-eye' : 'fa-eye-slash'"
+                ></i>
+              </button>
+            </div>
+            <small
+              class="text-danger"
+              *ngIf="f['password'].touched && f['password'].invalid"
+            >
+              Password is required.
+            </small>
+          </div>
+
+          <!-- Remember -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="rememberMe"
+                id="remember"
+              />
+              <label class="form-check-label" for="remember">Remember Me</label>
+            </div>
+            <a routerLink="/forgot-password">Forgot Password?</a>
+          </div>
+
+          <!-- Login -->
+          <button class="btn btn-primary w-100" [disabled]="loading">
+            <span *ngIf="!loading">Login</span>
+            <span *ngIf="loading">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Logging in...
+            </span>
+          </button>
+        </form>
+
+        <hr class="my-4" />
+
+        <div class="text-center">
+          Don't have an account?
+          <a routerLink="/register">Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

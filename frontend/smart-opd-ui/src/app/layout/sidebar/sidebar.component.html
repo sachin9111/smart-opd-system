@@ -1,4 +1,4 @@
-<div class="sidebar">
+<div class="sidebar" [class.collapsed]="collapsed">
 
   <div class="sidebar-header">
     <h5>Navigation</h5>
@@ -20,14 +20,7 @@
         </a>
     </li>
 
-    <li class="nav-item">
-      <a routerLink="/patients" routerLinkActive="active" class="nav-link">
-          <i class="fa-solid fa-hospital-user"></i>
-          <span class="nav-link-title">
-              Patient Management
-          </span>
-      </a>
-  </li>
+  
 
   <li>
       <a routerLink="/users" routerLinkActive="active">
@@ -57,17 +50,31 @@
       </a>
     </li>
 
+  <li>
+    <a routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <i class="fa-solid fa-calendar-check"></i>
+      <span>Appointments</span>
+    </a>
+  </li>
+  
+  <li>
+    <a routerLink="/appointments/my" routerLinkActive="active">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span>My Appointments</span>
+    </a>
+  </li>
+
     <li>
-      <a routerLink="/appointments" routerLinkActive="active">
-        <i class="fa-solid fa-calendar-check"></i>
-        <span>Appointments</span>
+      <a routerLink="/queue" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Queue</span>
       </a>
     </li>
 
     <li>
-      <a routerLink="/queue" routerLinkActive="active">
-        <i class="fa-solid fa-list-check"></i>
-        <span>Queue</span>
+      <a routerLink="/queue/my" routerLinkActive="active">
+      <i class="fa-solid fa-ticket"></i>
+      <span>My Queue</span>
       </a>
     </li>
 

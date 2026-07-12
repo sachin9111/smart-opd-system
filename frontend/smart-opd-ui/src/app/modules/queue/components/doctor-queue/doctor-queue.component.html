@@ -1,0 +1,84 @@
+<div class="container-fluid">
+    <h3 class="mb-3">Doctor Queue</h3>
+
+    <div class="row">
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Current Token</h6>
+                    <h2>{{dashboard.currentToken}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Waiting</h6>
+                    <h2>{{dashboard.waiting}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Completed</h6>
+                    <h2>{{dashboard.completed}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Skipped</h6>
+                    <h2>{{dashboard.skipped}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6>Last Token</h6>
+                    <h2>{{dashboard.lastToken}}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Patient</th>
+                        <th>Mobile</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of queueList"
+                        (click)="selectPatient(item)"
+                        [class.table-primary]="currentPatient?.id === item.id">
+                        <td>{{item.tokenNumber}}</td>
+                        <td>{{item.firstName}} {{item.lastName}}</td>
+                        <td>{{item.mobile}}</td>
+                        <td>
+                            <span class="badge bg-warning">{{item.status}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-primary me-2" (click)="nextPatient()">Next Patient</button>
+        <button class="btn btn-success me-2" (click)="complete()" [disabled]="!currentPatient">Complete</button>
+        <button class="btn btn-danger me-2" (click)="skip()" [disabled]="!currentPatient">Skip</button>
+        <button class="btn btn-secondary" (click)="recall()" [disabled]="!currentPatient">Recall</button>
+    </div>
+</div>

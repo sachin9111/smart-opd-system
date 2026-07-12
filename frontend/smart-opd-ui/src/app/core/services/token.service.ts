@@ -9,6 +9,8 @@ export class TokenService {
 
   private readonly REFRESH_TOKEN = 'refresh_token';
 
+  private readonly ROLES = 'roles';
+
   saveAccessToken(token: string): void {
 
     localStorage.setItem(this.ACCESS_TOKEN, token);
@@ -20,6 +22,16 @@ export class TokenService {
     return localStorage.getItem(this.ACCESS_TOKEN);
 
   }
+
+  saveRoles(roles:string[]){
+     localStorage.setItem(this.ROLES, roles[0]);
+  }
+
+  getRoles() : string | null {
+    return localStorage.getItem(this.ROLES);
+  }
+
+  
 
   saveRefreshToken(token: string): void {
 

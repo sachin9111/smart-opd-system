@@ -8,6 +8,6 @@ public enum QueueStatus {
 
     COMPLETED,
 
-    CANCELLED
+    CANCELLED, SKIPPED
 
 }

@@ -7,6 +7,7 @@ import { DoctorEditComponent } from './components/doctor-edit/doctor-edit.compon
 import { DoctorViewComponent } from './components/doctor-view/doctor-view.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DoctorRoutingModule } from './doctor-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    RouterModule,
+    DoctorRoutingModule,
     ReactiveFormsModule
   ]
 })

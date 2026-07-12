@@ -20,10 +20,13 @@ import { ChangePasswordModule } from './modules/change-password/change-password.
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { DoctorModule } from './modules/doctor/doctor.module';
 import { PatientModule } from './modules/patient/patient.module';
+import { DoctorQueueComponent } from './modules/queue/components/doctor-queue/doctor-queue.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    DoctorQueueComponent,
     
   ],
   imports: [

@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class MainLayoutComponent {
 
+  sidebarCollapsed = false;
+
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
 }

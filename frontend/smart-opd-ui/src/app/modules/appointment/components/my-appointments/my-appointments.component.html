@@ -1,0 +1,116 @@
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h4 class="mb-0">
+
+            My Appointments
+
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Date</th>
+
+                        <th>Time</th>
+
+                        <th>Doctor</th>
+
+                        <th>Token</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let item of appointments;let i=index">
+
+                        <td>{{i+1}}</td>
+
+                        <td>{{item.appointmentDate}}</td>
+
+                        <td>{{item.appointmentTime}}</td>
+
+                        <td>{{item.doctorId}}</td>
+
+                        <td>{{item.tokenNumber}}</td>
+
+                        <td>
+
+                            <span
+                                class="badge"
+
+                                [ngClass]="{
+
+                                'bg-success':item.status=='BOOKED',
+
+                                'bg-danger':item.status=='CANCELLED',
+
+                                'bg-primary':item.status=='COMPLETED'
+
+                            }">
+
+                                {{item.status}}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                [routerLink]="['/appointments/view',item.id]"
+                                class="btn btn-sm btn-outline-primary me-2">
+
+                                <i class="fa fa-eye"></i>
+
+                            </a>
+
+                            <button
+                                class="btn btn-sm btn-outline-danger"
+                                (click)="cancel(item.id!)">
+
+                                <i class="fa fa-times"></i>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    <tr *ngIf="appointments.length==0">
+
+                        <td colspan="7" class="text-center">
+
+                            No Appointments Found
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

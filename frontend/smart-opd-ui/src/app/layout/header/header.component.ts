@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 
 @Component({
@@ -9,6 +9,13 @@ import { Component } from '@angular/core';
 export class HeaderComponent {
 
    userName = 'User';
+
+   @Output()
+  toggleSidebar = new EventEmitter<void>();
+
+  onMenuClick() {
+    this.toggleSidebar.emit();
+  }
 
  
 
