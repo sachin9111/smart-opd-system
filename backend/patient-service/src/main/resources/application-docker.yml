@@ -1,17 +1,15 @@
 server:
-  port: 8082
-
-jwt:
-  secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+  port: 8087
 
 spring:
   application:
-    name: user-service
+    name: patient-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/smart_opd_user
-    username: root
-    password:
+    url: jdbc:mysql://mariadb:3306/smart_opd_patient
+    username: smartopd
+    password: smartopd
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -19,24 +17,27 @@ spring:
     show-sql: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 
     consumer:
-      group-id: user-service
+      group-id: patient-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          secret-key: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+
+jwt:
+  secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
 
   instance:
     prefer-ip-address: true

@@ -1,0 +1,52 @@
+docker build -t discovery-server:1.0 .
+
+
+docker run -d --name discovery-server -p 8761:8761 discovery-server:1.0
+
+docker stop discovery-server
+
+docker compose up -d
+docker compose up -d starts up the containers defined in your docker-compose.yml file. Breaking it down:
+
+docker compose — the tool that reads your docker-compose.yml file and manages multi-container applications
+up — creates and starts the containers (and any networks/volumes they need)
+-d — short for "detached" mode, meaning the containers run in the background instead of taking over your terminal
+
+
+check db
+
+docker exec -it smartopd-mariadb mariadb -uroot -proot
+
+
+
+This is a significant milestone. 🚀
+
+Before moving on, I recommend committing this working state.
+git add .
+git commit -m "Containerize Smart OPD microservices with Docker Compose"
+Also save these commands
+
+Start everything:
+
+docker compose up --build -d
+
+Stop everything:
+
+docker compose down
+
+View running containers:
+
+docker ps
+
+View logs of a service:
+
+docker logs auth-service -f
+
+Restart one service:
+
+docker compose restart auth-service
+
+Rebuild one service after code changes:
+
+docker compose up -d --build auth-service
+Next recommended milestone

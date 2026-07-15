@@ -1,40 +1,41 @@
 server:
-  port: 8080
+  port: 8085
 
 spring:
   application:
-    name: auth-service
+    name: appointment-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/smart_opd_auth
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mariadb:3306/smart_opd_appointment
+    username: smartopd
+    password: smartopd
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
+
 jwt:
   secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
-  access-token-expiration: 900000
-  refresh-token-expiration: 2592000000
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
+
   instance:
     prefer-ip-address: true
 

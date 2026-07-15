@@ -6,9 +6,10 @@ spring:
     name: doctor-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/smart_opd_doctor
-    username: root
-    password:
+    url: jdbc:mysql://mariadb:3306/smart_opd_doctor
+    username: smartopd
+    password: smartopd
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -16,7 +17,7 @@ spring:
     show-sql: true
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
 
   security:
     oauth2:
@@ -25,7 +26,7 @@ spring:
           secret-key: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
 
 jwt:
-  secret: 1f94a95c6b83a5d8df4c74b0d785f4787df4b16ddc9e0d7df4b8a15ef8b9f7c
+  secret: 1f94a95c6b83a5d8df4c74b0d785f4787dfb4b16ddc9e0d7df4b8a15ef8b9f7c
 
 eureka:
   client:
