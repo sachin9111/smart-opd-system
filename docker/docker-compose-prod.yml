@@ -1,0 +1,225 @@
+services:
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: smartopd-mariadb
+    restart: unless-stopped
+
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: smartopd
+      MARIADB_PASSWORD: smartopd
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  discovery-server:
+    image: discovery-server:latest
+    container_name: discovery-server
+    restart: unless-stopped
+
+    ports:
+      - "8761:8761"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: zookeeper
+    restart: unless-stopped
+
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka
+    restart: unless-stopped
+
+    depends_on:
+      - zookeeper
+
+    ports:
+      - "9092:9092"
+
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  auth-service:
+    image: auth-service:latest
+    container_name: auth-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8080:8080"
+
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    restart: unless-stopped
+
+    depends_on:
+      discovery-server:
+        condition: service_started
+      auth-service:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8081:8081"
+
+  user-service:
+    image: user-service:latest
+    container_name: user-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8082:8082"
+
+  notification-service:
+    image: notification-service:latest
+    container_name: notification-service
+    restart: unless-stopped
+
+    depends_on:
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8083:8083"
+
+  doctor-service:
+    image: doctor-service:latest
+    container_name: doctor-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8084:8084"
+
+  appointment-service:
+    image: appointment-service:latest
+    container_name: appointment-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8085:8085"
+
+  queue-service:
+    image: queue-service:latest
+    container_name: queue-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8086:8086"
+
+  patient-service:
+    image: patient-service:latest
+    container_name: patient-service
+    restart: unless-stopped
+
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      discovery-server:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+    ports:
+      - "8087:8087"
+
+  smart-opd-ui:
+    image: smart-opd-ui:latest
+    container_name: smart-opd-ui
+    restart: unless-stopped
+
+    depends_on:
+      api-gateway:
+        condition: service_started
+
+    ports:
+      - "4200:80"
+
+volumes:
+  mariadb_data:

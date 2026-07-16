@@ -1,0 +1,238 @@
+pipeline {
+
+    agent any
+
+    tools {
+        maven 'Maven3'
+        jdk 'JDK17'
+    }
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    stages {
+
+        stage('Checkout Source Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/sachin9111/smart-opd-system.git'
+            }
+        }
+
+        stage('Build Discovery Server') {
+            steps {
+                dir('backend/discovery-server') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build API Gateway') {
+            steps {
+                dir('backend/api-gateway') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Auth Service') {
+            steps {
+                dir('backend/auth-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build User Service') {
+            steps {
+                dir('backend/user-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Doctor Service') {
+            steps {
+                dir('backend/doctor-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Appointment Service') {
+            steps {
+                dir('backend/appointment-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Queue Service') {
+            steps {
+                dir('backend/queue-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Patient Service') {
+            steps {
+                dir('backend/patient-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Notification Service') {
+            steps {
+                dir('backend/notification-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Install Angular Dependencies') {
+            steps {
+                dir('frontend/smart-opd-ui') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Angular') {
+            steps {
+                dir('frontend/smart-opd-ui') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Verify Angular Build') {
+            steps {
+                sh 'ls -la frontend/smart-opd-ui/dist'
+            }
+        }
+
+        stage('Build Backend Docker Images') {
+            steps {
+                script {
+
+                    def services = [
+                        'discovery-server',
+                        'api-gateway',
+                        'auth-service',
+                        'user-service',
+                        'doctor-service',
+                        'appointment-service',
+                        'queue-service',
+                        'patient-service',
+                        'notification-service'
+                    ]
+
+                    for(service in services){
+
+                        dir("backend/${service}"){
+
+                            sh """
+                                docker build \
+                                -t ${service}:latest \
+                                .
+                            """
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        stage('Build Angular Docker Image') {
+            steps {
+                dir('frontend/smart-opd-ui') {
+
+                    sh '''
+                        docker build \
+                        -t smart-opd-ui:latest \
+                        .
+                    '''
+
+                }
+            }
+        }
+
+        stage('Verify Docker Images') {
+            steps {
+                sh 'docker images'
+            }
+        }
+
+        stage('Deploy Smart OPD') {
+            steps {
+
+                dir('docker') {
+
+                    sh 'docker-compose -f docker-compose-prod.yml down || true'
+
+                    sh '''
+                        docker-compose \
+                        -f docker-compose-prod.yml \
+                        up -d --force-recreate
+                    '''
+
+                }
+
+            }
+        }
+
+        stage('Running Containers') {
+            steps {
+                sh 'docker ps'
+            }
+        }
+
+        stage('Wait for Startup') {
+            steps {
+
+                echo 'Waiting 60 seconds for Smart OPD services...'
+
+                sleep(time: 60, unit: 'SECONDS')
+
+            }
+        }
+
+    }
+
+    post {
+
+        success {
+
+            echo ''
+            echo '=========================================='
+            echo ' Smart OPD Pipeline Completed Successfully'
+            echo '=========================================='
+            echo ''
+
+        }
+
+        failure {
+
+            echo ''
+            echo '=========================================='
+            echo ' Smart OPD Pipeline Failed'
+            echo '=========================================='
+            echo ''
+
+        }
+
+        always {
+
+            echo 'Pipeline Finished.'
+
+        }
+
+    }
+
+}

@@ -1,0 +1,55 @@
+Open
+
+http://localhost:8088
+
+You'll see
+
+Unlock Jenkins
+
+Get the password
+
+Run
+
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+PS D:\Sachin\smart-opd-system\jenkins> docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+87af441393d145f7957c6377bffb451f
+
+
+
+
+echo "==============================="
+echo "Git"
+echo "==============================="
+git --version
+which git
+
+echo ""
+echo "==============================="
+echo "Java"
+echo "==============================="
+java -version
+
+echo ""
+echo "==============================="
+echo "Maven"
+echo "==============================="
+mvn -version
+
+echo ""
+echo "==============================="
+echo "Docker"
+echo "==============================="
+docker --version
+
+echo ""
+echo "==============================="
+echo "Docker Compose"
+echo "==============================="
+docker compose version
+
+echo ""
+echo "==============================="
+echo "Running Containers"
+echo "==============================="
+docker ps
