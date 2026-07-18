@@ -1,0 +1,48 @@
+start sequence
+
+1.start docker desktop first
+2.start D:\Sachin\smart-opd-system\docker,jenkins,sonarqube
+3. from D:\Sachin\Tools\ngrok   .\ngrok.exe http 8088
+  Forwarding                    https://corene-aedilitian-ramiro.ngrok-free.dev -> http://localhost:8088
+4.Update GitHub Webhook
+ GitHub
+→ Repository
+→ Settings
+→ Webhooks
+5. Update SonarQube Webhook (http://localhost:9000/projects)
+    SonarQube
+	Administration
+	Configuration
+	Webhooks
+	
+Step 7: Verify Jenkins is Reachable
+
+Open:
+
+https://corene-aedilitian-ramiro.ngrok-free.dev
+
+✔ Start Docker Desktop
+
+✔ docker ps
+
+✔ docker compose up -d
+    for Smart OPD
+
+✔ Jenkins
+    docker compose up -d
+
+✔ SonarQube
+    docker compose up -d
+
+✔ ngrok
+    ngrok http 8088
+
+✔ Update GitHub Webhook
+
+✔ Update SonarQube Webhook
+
+✔ Verify Jenkins
+
+
+
+✔ Build Now / Push to GitHub
