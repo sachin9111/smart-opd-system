@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mariadb
+  namespace: smart-opd
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mariadb
+
+  template:
+
+    metadata:
+      labels:
+        app: mariadb
+
+    spec:
+
+      containers:
+
+      - name: mariadb
+
+        image: mariadb:11.8
+
+        ports:
+        - containerPort: 3306
+
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          value: root
+
+        - name: MARIADB_DATABASE
+          value: smartopd
+
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mariadb-storage
+
+      volumes:
+      - name: mariadb-storage
+
+        persistentVolumeClaim:
+          claimName: mariadb-pvc

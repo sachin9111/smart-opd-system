@@ -41,6 +41,22 @@ https://corene-aedilitian-ramiro.ngrok-free.dev
 
 ✔ Update SonarQube Webhook
 
+Manage Jenkins
+→ Credentials
+→ System
+→ Global credentials
+→ dockerhub
+
+Edit the credential.
+
+Leave the username:
+
+sachin9111
+
+Replace only the password with the new token.
+
+Save.
+
 ✔ Verify Jenkins
 
 

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: discovery-server
+  namespace: smart-opd
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: discovery-server
+
+  template:
+
+    metadata:
+      labels:
+        app: discovery-server
+
+    spec:
+
+      containers:
+
+      - name: discovery-server
+
+        image: sachin9111/discovery-server:latest
+
+        imagePullPolicy: Always
+
+        ports:
+
+        - containerPort: 8761

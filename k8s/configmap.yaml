@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: smartopd-config
+  namespace: smart-opd
+
+data:
+
+  DB_HOST: mariadb
+  DB_PORT: "3306"
+  DB_NAME: smartopd
+
+  EUREKA_HOST: discovery-server
+  EUREKA_PORT: "8761"
+
+  API_GATEWAY_HOST: api-gateway
+  API_GATEWAY_PORT: "8081"
