@@ -1,0 +1,444 @@
+deploy services on aws 
+
+1. connect with ubuntu
+  ssh -i "D:\Sachin\awskey\smart-opd-key.pem" ubuntu@ec2-13-206-185-216.ap-south-1.compute.amazonaws.com
+  
+2.install docker
+  sudo apt install docker.io -y
+  sudo systemctl start docker
+  sudo systemctl enable docker
+  sudo systemctl status docker
+3.Allow the ubuntu user to run Docker without sudo
+  sudo usermod -aG docker $USER
+  
+4.Install k3s(kubernate)
+  curl -sfL https://get.k3s.io | sh -
+  sudo systemctl status k3s
+  sudo kubectl get nodes
+  sudo kubectl get pods -A
+  
+5.Then create our project namespace
+  sudo kubectl create namespace smart-opd
+  sudo kubectl get ns
+6.Create project folder
+  mkdir smart-opd
+  cd smart-opd
+7.Clone your project
+  sudo apt install git -y
+  git clone https://github.com/sachin9111/smart-opd-system.git
+  cd smart-opd-system
+  ls
+8.Create namespace
+  sudo kubectl apply -f k8s/namespace.yaml
+  sudo kubectl get ns
+9.deploy
+  sudo kubectl apply -f k8s/mariadb/deployment.yaml
+  sudo kubectl apply -f k8s/mariadb/service.yaml
+  
+  sudo kubectl get pods -n smart-opd
+10.Test MariaDB
+  sudo kubectl logs deployment/mariadb -n smart-opd
+  
+11.Step 1: Go to project root
+   cd ~/smart-opd/smart-opd-system
+   sudo kubectl apply -f k8s/mariadb/pvc.yaml
+   sudo kubectl get pvc -n smart-opd
+   sudo kubectl apply -f k8s/configmap.yaml
+   sudo kubectl get configmap -n smart-opd
+   sudo kubectl apply -f k8s/secret.yaml
+   sudo kubectl apply -f k8s/secret.yaml
+   Step 2: Deploy MariaDB
+   sudo kubectl apply -f k8s/mariadb/deployment.yaml
+   sudo kubectl apply -f k8s/mariadb/service.yaml
+   sudo kubectl get pods -n smart-opd -w
+   sudo kubectl get pods -n smart-opd -w
+   sudo kubectl get pvc -n smart-opd
+   sudo kubectl get svc -n smart-opd
+12.Deploy Eureka Discovery Server
+  nano k8s/discovery-server/deployment.yaml
+  verify to contain image: sachin9111/discovery-server:latest
+  sudo kubectl apply -f k8s/discovery-server/deployment.yaml
+  sudo kubectl apply -f k8s/discovery-server/service.yaml
+  sudo kubectl get pods -n smart-opd -w
+  check
+   sudo kubectl get svc -n smart-opd
+13.Step 1 Create an Ingress for Discovery Server
+   nano ~/smart-opd/smart-opd-system/k8s/discovery-server/ingress.yaml
+   paste it
+   apiVersion: networking.k8s.io/v1
+	kind: Ingress
+
+	metadata:
+	  name: discovery-server
+	  namespace: smart-opd
+
+	spec:
+	  ingressClassName: traefik
+
+	  rules:
+	  - http:
+		  paths:
+		  - path: /
+			pathType: Prefix
+
+			backend:
+			  service:
+				name: discovery-server
+
+				port:
+				  number: 8761
+				  
+	sudo kubectl apply -f k8s/discovery-server/ingress.yaml
+	
+	sudo kubectl get ingress -n smart-opd
+	sudo kubectl describe ingress discovery-server -n smart-opd
+	
+	
+Step 1: Create a DuckDNS account
+  If it doesn't, copy your EC2 public IP from the AWS Console and paste it into the Current IP field.
+  Step 1: Get your EC2 Public IP
+	In the AWS Console:
+	EC2 → Instances → smart-opd-k8s
+	Copy the Public IPv4 address.
+  update ip Update IP
+  nslookup smartopd.duckdns.org
+  
+Step 2: Verify Traefik Service
+
+Run:
+
+sudo kubectl get svc -n kube-system traefik
+
+I expect something similar to:
+
+NAME      TYPE           PORT(S)
+traefik   LoadBalancer   80:xxxxx/TCP,443:xxxxx/TCP
+
+14.Perfect. From this point onward, we're setting up your cluster like a real production environment.
+  We'll create a HelmChartConfig for Traefik and configure ACME (Let's Encrypt). After that, we'll update your Ingress to use TLS.
+  
+  sudo kubectl describe pod -n kube-system -l app.kubernetes.io/name=traefik | grep Image
+  sudo kubectl get helmchart -A
+  
+  NAMESPACE     NAME
+kube-system   traefik
+kube-system   traefik-crd
+
+  Step 3: Check whether a Traefik configuration already exists
+
+Run:
+
+sudo ls /var/lib/rancher/k3s/server/manifests/
+
+You should see files like:
+
+traefik.yaml
+traefik-crd.yaml
+
+Paste that output too.
+
+Perfect! This tells me everything I needed to know.
+
+You have:
+
+✅ K3s v1.36
+✅ Traefik v3.7.4
+✅ Installed via HelmChart
+✅ Default K3s installation
+
+We'll use the official K3s method. This is exactly how it should be done in production.
+
+Step 1: Create a HelmChartConfig
+
+Run:
+
+sudo nano /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+
+Paste this exactly (replace YOUR_EMAIL@gmail.com with your own email):
+
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+
+metadata:
+  name: traefik
+  namespace: kube-system
+
+spec:
+  valuesContent: |-
+    additionalArguments:
+      - "--certificatesresolvers.letsencrypt.acme.email=YOUR_EMAIL@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+
+    persistence:
+      enabled: true
+      path: /data
+      size: 128Mi
+
+Save it.
+
+Ctrl + O
+Enter
+Ctrl + X
+Step 2: Wait for Traefik to restart
+
+Run:
+
+sudo kubectl get pods -n kube-system -w
+
+You'll see something like
+
+traefik-xxxxx    Terminating
+
+then
+
+traefik-yyyyy    Running
+
+Wait until the new pod is Running.
+
+Then press
+
+Ctrl+C
+Step 3: Verify
+
+Run:
+
+sudo kubectl get pods -n kube-system
+
+and
+
+sudo kubectl logs -n kube-system deployment/traefik | tail -30
+Stop here
+
+Don't modify the Ingress yet.
+
+Paste the output of those two commands.
+
+Why are we doing this first?
+
+Traefik needs to know how to obtain certificates before any Ingress asks for one.
+
+Once we verify Traefik has restarted successfully, we'll update your existing discovery-server Ingress to:
+
+Use your domain smartopd.duckdns.org
+Automatically request a Let's Encrypt certificate
+Redirect HTTP → HTTPS
+Serve the Eureka dashboard securely at:
+https://smartopd.duckdns.org
+
+
+
+
+Excellent! 🎉
+
+This line is exactly what I wanted to see:
+
+Starting provider *acme.Provider
+Testing certificate renew...
+providerName=letsencrypt.acme
+
+✅ Let's Encrypt is configured correctly.
+
+The warning:
+
+No domain found in rule PathPrefix("/")
+
+is expected because your Ingress still uses:
+
+host: *
+
+or no host at all.
+
+Now we'll fix that.
+
+Step 2 - Update your Ingress
+
+Open your ingress:
+
+nano ~/smart-opd/smart-opd-system/k8s/discovery-server/ingress.yaml
+
+Replace everything with this:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: discovery-server
+  namespace: smart-opd
+
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+
+spec:
+
+  ingressClassName: traefik
+
+  rules:
+  - host: smartopd.duckdns.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: discovery-server
+            port:
+              number: 8761
+
+  tls:
+  - hosts:
+      - smartopd.duckdns.org
+
+Save it.
+
+Step 3
+
+Apply it.
+
+sudo kubectl apply -f ~/smart-opd/smart-opd-system/k8s/discovery-server/ingress.yaml
+Step 4
+
+Now watch Traefik.
+
+sudo kubectl logs -n kube-system deployment/traefik -f
+
+Leave this command running.
+
+Step 5
+
+From your Windows browser, open
+
+https://smartopd.duckdns.org
+
+The first request should make Traefik contact Let's Encrypt and obtain a certificate.
+
+If everything is correct you'll see something similar in the logs
+Obtaining ACME certificate for smartopd.duckdns.org
+
+Server responded with a certificate
+
+Certificates obtained successfully
+
+or
+
+Adding certificate for domain(s) smartopd.duckdns.org
+Don't stop the logs.
+
+Open https://smartopd.duckdns.org in your browser and then paste the new Traefik log output here. That will tell us whether the certificate request succeeded or if there's one final configuration issue to address.
+
+
+2026-07-19T09:43:55Z INF Starting provider aggregator *aggregator.ProviderAggregator
+2026-07-19T09:43:55Z INF Starting provider *traefik.Provider
+2026-07-19T09:43:55Z INF Starting provider *crd.Provider
+2026-07-19T09:43:55Z INF label selector is: "" providerName=kubernetescrd
+2026-07-19T09:43:55Z INF Creating in-cluster Provider client providerName=kubernetescrd
+2026-07-19T09:43:55Z INF Starting provider *acme.ChallengeTLSALPN
+2026-07-19T09:43:55Z INF Starting provider *acme.Provider
+2026-07-19T09:43:55Z INF Testing certificate renew... acmeCA=https://acme-v02.api.letsencrypt.org/directory providerName=letsencrypt.acme
+2026-07-19T09:43:55Z INF Starting provider *ingress.Provider
+2026-07-19T09:43:55Z INF ingress label selector is: "" providerName=kubernetes
+2026-07-19T09:43:55Z INF Creating in-cluster Provider client providerName=kubernetes
+2026-07-19T09:43:55Z WRN No domain found in rule PathPrefix("/"), the TLS options applied for this router will depend on the SNI of each request routerName=websecure-smart-opd-discovery-server@kubernetes
+2026-07-19T09:43:55Z WRN No domain found in rule PathPrefix("/"), the TLS options applied for this router will depend on the SNI of each request routerName=websecure-smart-opd-discovery-server@kubernetes
+2026-07-19T09:47:11Z INF Register... providerName=letsencrypt.acme
+
+That's actually a good sign.
+
+The important line is:
+
+INF Register... providerName=letsencrypt.acme
+
+This means Traefik has started talking to Let's Encrypt. Now we need to verify whether the certificate was issued successfully.
+
+Step 1. Check if the certificate was created
+
+Run:
+
+sudo kubectl logs -n kube-system deployment/traefik | grep -i certificate
+
+If nothing appears, run:
+
+sudo kubectl logs -n kube-system deployment/traefik | grep -i acme
+
+or
+
+sudo kubectl logs -n kube-system deployment/traefik | grep -i letsencrypt
+
+Paste the output.
+
+Step 2. Verify your Ingress
+
+Run:
+
+sudo kubectl describe ingress discovery-server -n smart-opd
+
+I want to verify that it contains:
+
+Host: smartopd.duckdns.org
+
+and not
+
+Host: *
+
+because earlier your ingress had:
+
+Host: *
+
+That prevents Let's Encrypt from issuing the certificate.
+
+Step 3. Show me your ingress file
+
+Display it:
+
+cat ~/smart-opd/smart-opd-system/k8s/discovery-server/ingress.yaml
+
+I want to verify that it looks like this:
+
+spec:
+  ingressClassName: traefik
+
+  rules:
+  - host: smartopd.duckdns.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: discovery-server
+            port:
+              number: 8761
+
+  tls:
+  - hosts:
+    - smartopd.duckdns.org
+The warning in your logs explains the issue
+
+Earlier Traefik printed:
+
+No domain found in rule PathPrefix("/")
+
+That warning happens when Traefik sees an ingress without a hostname.
+
+For Let's Encrypt to work, Traefik must know the exact domain (smartopd.duckdns.org).
+
+So before moving further, I want to confirm your ingress.yaml contains the hostname correctly.
+
+Please send me:
+
+Output of
+cat ~/smart-opd/smart-opd-system/k8s/discovery-server/ingress.yaml
+Output of
+sudo kubectl describe ingress discovery-server -n smart-opd
+
+Once I verify those, we'll get:
+
+https://smartopd.duckdns.org working with a real Let's Encrypt SSL certificate.
+
+15. Step 1: Check if Traefik created the certificate
+  
+
+  
